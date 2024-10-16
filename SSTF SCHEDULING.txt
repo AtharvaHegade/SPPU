@@ -1,0 +1,63 @@
+SSTF DISK SCHEDULING
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CYLINDER 200
+
+
+void sstf(int requests[], int n, int initial_head) {
+    int seek_sequence[MAX_CYLINDER], completed[MAX_CYLINDER] = {0};
+    int current_head = initial_head, count = 0;
+    int total_seek_time = 0;
+
+    while (count < n) {
+        int min_distance = 10000, index = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (!completed[i]) {
+                int distance = abs(requests[i] - current_head);
+                if (distance < min_distance) {
+                    min_distance = distance;
+                    index = i;
+                }
+            }
+        }
+
+    completed[index] = 1;
+        seek_sequence[count++] = requests[index];
+        total_seek_time += abs(requests[index] - current_head);
+        current_head = requests[index];
+    }
+
+
+    printf("SSTF Seek Sequence: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\nTotal Seek Time: %d\n", total_seek_time);
+}
+
+
+int main() {
+    int requests[MAX_CYLINDER], n, initial_head;
+
+    printf("SSTF Disk Scheduling Algorithm\n");
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+    
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &initial_head);
+
+    // Call SSTF function to process the requests
+    sstf(requests, n, initial_head);
+
+    return 0;
+}
