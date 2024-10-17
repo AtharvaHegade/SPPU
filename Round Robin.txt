@@ -1,0 +1,108 @@
+//Name : Kalash Malge
+//Roll NO.: TIA31
+//Btach :B
+
+//Round Robin
+#include<stdio.h>
+#define MAX_PROCESSES 10
+
+int main() {
+    int n, i, j;
+    int burst_time[MAX_PROCESSES], remaining_time[MAX_PROCESSES];
+    int process_order[MAX_PROCESSES], waiting_time[MAX_PROCESSES],
+        turnaround_time[MAX_PROCESSES];
+
+    int arrival_time[MAX_PROCESSES];
+    int time_quantum;
+
+    int completed = 0, current_time = 0;
+
+    double avg_waiting_time = 0, avg_turnaround_time = 0;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter time quantum: ");
+    scanf("%d", &time_quantum);
+
+    printf("Enter burst times for each process:\n");
+    for (i = 0; i < n; i++) {
+        printf("Burst time for process %d: ", i + 1);
+        scanf("%d", &burst_time[i]);
+        remaining_time[i] = burst_time[i];
+        process_order[i] = i + 1;
+    }
+
+    printf("Enter arrival times for each process: \n");
+    for (i = 0; i < n; i++) {
+        printf("Arrival time for process %d: ", i + 1);
+        scanf("%d", &arrival_time[i]);
+    }
+
+    while (completed < n) {
+        for (i = 0; i < n; i++) {
+            if (arrival_time[i] <= current_time && remaining_time[i] > 0) {
+                if (remaining_time[i] > time_quantum) {
+                    current_time += time_quantum;
+                    remaining_time[i] -= time_quantum;
+                } else {
+                    current_time += remaining_time[i];
+                    remaining_time[i] = 0;
+                    completed++;
+                    turnaround_time[i] = current_time - arrival_time[i];
+                    waiting_time[i] = turnaround_time[i] - burst_time[i];
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        avg_waiting_time += waiting_time[i];
+        avg_turnaround_time += turnaround_time[i];
+    }
+
+    avg_waiting_time /= n;
+    avg_turnaround_time /= n;
+
+    printf("\n\nProcess \t Burst Time \t Arrival Time \t Waiting Time \t Turnaround Time \n");
+    for (i = 0; i < n; i++) {
+        printf("P%d\t\t%d\t\t%d\t\t%d\t\t%d\n", process_order[i], burst_time[i], arrival_time[i], waiting_time[i], turnaround_time[i]);
+    }
+
+    printf("\nAverage Waiting Time: %.2lf\n", avg_waiting_time);
+    printf("Average Turnaround Time: %.2lf\n", avg_turnaround_time);
+
+    return 0;
+}
+
+OUTPUT:
+student@student:~$ gcc OS_Lab-5.2.c
+student@student:~$ ./a.out
+Enter the number of processes: 5
+Enter time quantum: 2
+Enter burst times for each process:
+Burst time for process 1: 1
+Burst time for process 2: 4
+Burst time for process 3: 2
+Burst time for process 4: 6
+Burst time for process 5: 3
+Enter arrival times for each process: 
+Arrival time for process 1: 3
+Arrival time for process 2: 1
+Arrival time for process 3: 4
+Arrival time for process 4: 0
+Arrival time for process 5: 2
+
+
+Process 	 Burst Time 	 Arrival Time 	 Waiting Time 	 Turnaround Time 
+P1		1		3		1		2
+P2		4		1		9		13
+P3		2		4		3		5
+P4		6		0		10		16
+P5		3		2		7		10
+
+Average Waiting Time: 6.00
+Average Turnaround Time: 9.20
+student@student:~$ 
+
+
